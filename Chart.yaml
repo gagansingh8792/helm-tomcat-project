@@ -2,5 +2,5 @@ apiVersion: v2
 name: java-tomcat
 appVersion: "1.0"
 description: helm-tomcat-project
-version: 0.1.0
+version: 0.1.1
 
