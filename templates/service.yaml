@@ -3,13 +3,21 @@ kind: Service
 metadata:
   name: {{ include "helm-tomcat-project.fullname" . }}
   labels:
-    {{- include "helm-tomcat-project.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "helm-tomcat-project.name" . }}
+    helm.sh/chart: {{ include "helm-tomcat-project.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - name: http
+      port: {{ .Values.service.port }}
       protocol: TCP
-      name: http
+      targetPort: {{ .Values.service.targetPort }}
+{{ if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
+      nodePort: {{.Values.service.nodePort}}
+{{ end }}
   selector:
-    {{- include "helm-tomcat-project.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "helm-tomcat-project.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+
